@@ -1,0 +1,32 @@
+[
+    {
+        "id": 5,
+        "id_pemesanan": 3,
+        "id_tipe_kamar": 1,
+        "id_kamar": 1,
+        "nama_tamu_spesifik": "Asep",
+        "harga_kamar_instance": 250000,
+        "created_at": "2026-04-02T02:51:22.000000Z",
+        "updated_at": "2026-04-02T02:51:22.000000Z",
+        "pemesanan": {
+            "id": 3,
+            "nomor_pemesanan": "BO-202604020001",
+            "nama_pemesan": "sann Gis",
+            "email_pemesan": "sann@mail.com",
+            "tgl_pemesanan": "2026-04-02T02:51:22.000000Z",
+            "tgl_check_in": "2026-04-12T00:00:00.000000Z",
+            "tgl_check_out": "2026-05-24T00:00:00.000000Z",
+            "jumlah_kamar": 1,
+            "jumlah_malam": 42,
+            "total_harga": 10500000,
+            "metode_pembayaran": "transfer",
+            "bukti_transfer": "bukti_transfer\/KgmN61Ns6QHHJIQAgDS96L7MGcIRKN1SuqDjRyir.jpg",
+            "denda": 0,
+            "status_pemesanan": "check_in",
+            "status_pembayaran": "lunas",
+            "id_user": 4,
+            "created_at": "2026-04-02T02:51:22.000000Z",
+            "updated_at": "2026-04-02T02:53:54.000000Z"
+        }
+    }
+]
