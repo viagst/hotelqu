@@ -7,12 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 class Pemesanan extends Model
 {
     protected $fillable = [
-        'nomor_pemesanan', 'nama_pemesan', 'email_pemesan',
-        'tgl_pemesanan', 'tgl_check_in', 'tgl_check_out',
-        'jumlah_kamar', 'jumlah_malam', 'total_harga',
-        'metode_pembayaran', 'bukti_transfer', 'denda',
-        'status_pemesanan', 'status_pembayaran', 'id_user',
-    ];
+    'nomor_pemesanan',
+    'nama_pemesan',
+    'email_pemesan',
+    'tgl_pemesanan',
+    'tgl_check_in',
+    'tgl_check_out',
+    'jumlah_kamar',
+    'jumlah_malam',
+    'total_harga',
+    'metode_pembayaran',
+    'bukti_transfer',
+    'denda',
+    'jumlah_bayar',
+    'kembalian',
+    'status_pemesanan',
+    'status_pembayaran',
+    'id_user',
+];
 
     protected function casts(): array
     {
@@ -22,6 +34,8 @@ class Pemesanan extends Model
             'tgl_check_out' => 'date',
             'total_harga' => 'integer',
             'denda' => 'integer',
+            'jumlah_bayar' => 'integer',
+'kembalian' => 'integer',
         ];
     }
 

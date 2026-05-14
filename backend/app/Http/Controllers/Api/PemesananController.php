@@ -71,7 +71,7 @@ class PemesananController extends Controller
                 'total_harga' => $totalHarga,
                 'metode_pembayaran' => $request->metode_pembayaran,
                 'status_pemesanan' => 'baru',
-                'status_pembayaran' => $request->metode_pembayaran === 'cash' ? 'lunas' : 'belum_dibayar',
+                'status_pembayaran' => 'belum_dibayar',
                 'id_user' => $request->user()->id,
             ]);
 
@@ -205,76 +205,125 @@ class PemesananController extends Controller
     }
 
     public function updateStatus(Request $request, $id)
-    {
-        $request->validate([
-            'status_pemesanan' => 'required|in:baru,check_in,check_out',
-            'denda' => 'nullable|integer|min:0',
-            'actual_checkout_time' => 'nullable|string',
-        ]);
+{
+    $request->validate([
+        'status_pemesanan' => 'required|in:baru,check_in,check_out',
+        'actual_checkout_time' => 'nullable|string',
+        'jumlah_bayar' => 'nullable|integer|min:0',
+    ]);
 
-        $pemesanan = Pemesanan::findOrFail($id);
+    $pemesanan = Pemesanan::findOrFail($id);
 
-        if ($request->status_pemesanan === 'check_in' && $pemesanan->status_pembayaran !== 'lunas') {
-            return response()->json([
-                'message' => 'Gagal check-in: Pembayaran belum lunas.',
-            ], 422);
-        }
+    if (
+    $request->status_pemesanan === 'check_in' &&
+    $pemesanan->metode_pembayaran === 'transfer' &&
+    $pemesanan->status_pembayaran !== 'lunas'
+)
+{
+    return response()->json([
+        'message' => 'Gagal check-in: Pembayaran transfer belum lunas.',
+    ], 422);
+}
 
-        $updateData = ['status_pemesanan' => $request->status_pemesanan];
+    $updateData = [
+        'status_pemesanan' => $request->status_pemesanan
+    ];
 
-        // Always compute checkout penalty on the server to avoid client-side mismatch.
-        if ($request->status_pemesanan === 'check_out') {
-            $expectedCheckout = Carbon::parse($pemesanan->tgl_check_out)->setHour(12)->setMinute(0)->setSecond(0);
+    // =========================
+    // CHECK OUT
+    // =========================
+    if ($request->status_pemesanan === 'check_out') {
 
-            // Parse actual checkout time - handle datetime-local format flexibly
-            $actualCheckout = null;
+        $expectedCheckout = Carbon::parse($pemesanan->tgl_check_out)
+            ->setHour(12)
+            ->setMinute(0)
+            ->setSecond(0);
 
-            if ($request->filled('actual_checkout_time')) {
-                try {
-                    $actualCheckout = Carbon::parse($request->actual_checkout_time);
-                } catch (\Exception $e) {
-                    // Fallback: use current time if parsing fails
-                    $actualCheckout = Carbon::now();
-                }
-            } else {
+        // actual checkout
+        if ($request->filled('actual_checkout_time')) {
+            try {
+                $actualCheckout = Carbon::parse($request->actual_checkout_time);
+            } catch (\Exception $e) {
                 $actualCheckout = Carbon::now();
             }
+        } else {
+            $actualCheckout = Carbon::now();
+        }
 
-            $denda = 0;
-            if ($actualCheckout->gt($expectedCheckout)) {
-                $hoursLate = (int) ceil($expectedCheckout->diffInMinutes($actualCheckout) / 60);
-                $denda = $hoursLate * 50000;
+        // =========================
+        // HITUNG DENDA
+        // =========================
+        $denda = 0;
+
+        if ($actualCheckout->gt($expectedCheckout)) {
+            $hoursLate = (int) ceil(
+                $expectedCheckout->diffInMinutes($actualCheckout) / 60
+            );
+
+            $denda = $hoursLate * 50000;
+        }
+
+        $updateData['denda'] = $denda;
+
+        // =========================
+        // TOTAL PEMBAYARAN
+        // =========================
+        $totalBayar = $pemesanan->total_harga + $denda;
+
+        // =========================
+        // CASH
+        // =========================
+        if ($pemesanan->metode_pembayaran === 'cash') {
+
+            $jumlahBayar = $request->jumlah_bayar ?? 0;
+
+            if ($jumlahBayar < $totalBayar) {
+                return response()->json([
+                    'message' => 'Uang pembayaran kurang.',
+                ], 422);
             }
-            $updateData['denda'] = $denda;
 
-            // Payment rule based on denda (reuse existing fields)
-            // - if denda > 500 => must transfer (user uploads bukti_transfer)
-            // - if denda <= 500 => still require validation like cash (no auto-lunas)
-            if ($denda > 500) {
-                $updateData['metode_pembayaran'] = 'transfer';
-                $updateData['status_pembayaran'] = 'belum_dibayar';
-            } else {
-                // keep current metode_pembayaran but ensure status requires validation
+            $kembalian = $jumlahBayar - $totalBayar;
+
+            $updateData['jumlah_bayar'] = $jumlahBayar;
+            $updateData['kembalian'] = $kembalian;
+            $updateData['status_pembayaran'] = 'lunas';
+        }
+
+        // =========================
+        // TRANSFER
+        // =========================
+        if ($pemesanan->metode_pembayaran === 'transfer') {
+
+            if ($denda > 0) {
                 $updateData['status_pembayaran'] = 'belum_dibayar';
             }
         }
-
-
-        $pemesanan->update($updateData);
-
-        if ($request->status_pemesanan === 'check_out') {
-            // When check-out processed, room becomes dirty.
-            // Release back to available (bersih) should be done via admin action/manual process after payment.
-
-            $kamarIds = $pemesanan->detailPemesanans()->pluck('id_kamar');
-            \App\Models\Kamar::whereIn('id', $kamarIds)->update(['status_kamar' => 'kotor']);
-        }
-
-        return response()->json([
-            'message' => 'Status pemesanan berhasil diupdate',
-            'data' => $pemesanan->fresh()->load('detailPemesanans.kamar', 'detailPemesanans.tipeKamar'),
-        ]);
     }
+
+    $pemesanan->update($updateData);
+
+    // kamar jadi kotor setelah checkout
+    if ($request->status_pemesanan === 'check_out') {
+
+        $kamarIds = $pemesanan
+            ->detailPemesanans()
+            ->pluck('id_kamar');
+
+        \App\Models\Kamar::whereIn('id', $kamarIds)
+            ->update([
+                'status_kamar' => 'kotor'
+            ]);
+    }
+
+    return response()->json([
+        'message' => 'Status pemesanan berhasil diupdate',
+        'data' => $pemesanan->fresh()->load(
+            'detailPemesanans.kamar',
+            'detailPemesanans.tipeKamar'
+        ),
+    ]);
+}
 
     public function myBookings(Request $request)
     {
