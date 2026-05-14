@@ -26,6 +26,7 @@ Route::get('/tipe-kamar/{id}', [TipeKamarController::class, 'show']);
 
 // Public: Check order
 Route::post('/cek-pesanan', [PemesananController::class, 'cekPesanan']);
+// Invoice bisa diakses publik (untuk tamu via link) atau authenticated (untuk admin/resepsionis)
 Route::get('/pemesanan/{id}/invoice', [PemesananController::class, 'invoice']);
 
 // Authenticated routes

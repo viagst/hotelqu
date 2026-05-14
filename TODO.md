@@ -1,4 +1,4 @@
-tipe# TODO
+# TODO
 - [x] Perbaiki frontend `resepsionis/pemesanan.vue`: pastikan `actualCheckoutTime` selalu diparse aman (tidak menghasilkan NaN).
 - [x] Perbaiki computed `hoursLate` supaya aman terhadap invalid date (return 0 bukan NaN).
 - [x] Hapus pengiriman field `denda` dari request `processCheckout` (biar backend menghitung sendiri).
@@ -7,7 +7,8 @@ tipe# TODO
 - [x] Barcode invoice untuk denda sudah ditambahkan (sederhana); verifikasi visual.
 
 - [x] Rapihin UI/typo/layout di frontend `admin/tipe-kamar.vue` (terutama tabel & modal)
-- [ ] Rapihin konsistensi reset form state pada buka modal (Tambah vs Edit)
-- [ ] Rapihin tampilan kolom "Tersisa" agar tidak memakai guard yang membingungkan
+- [x] Rapihin konsistensi reset form state pada buka modal (Tambah vs Edit)
+- [x] Rapihin tampilan kolom "Tersida" — sekarang tampil angka dengan warna (hijau/kuning/merah)
 
-
+## Backend
+- [ ] Jalankan `composer install` di folder backend (vendor/ belum ada → artisan tidak bisa jalan)

@@ -32,6 +32,7 @@
             <tr class="border-b border-orange- bg-gray-100">
               <th class="text-left p-4 text-gray-700 font-medium">No. Pemesanan</th>
               <th class="text-left p-4 text-gray-700 font-medium">Tamu</th>
+              <th class="text-left p-4 text-gray-700 font-medium">Kamar</th>
               <th class="text-left p-4 text-gray-700 font-medium">Check-in</th>
               <th class="text-left p-4 text-gray-700 font-medium">Check-out</th>
               <th class="text-right p-4 text-gray-700 font-medium">Total</th>
@@ -53,6 +54,13 @@
 
               <td class="p-4 text-gray-800">
                 {{ p.nama_pemesan }}
+              </td>
+
+              <td class="p-4 text-gray-700 text-xs">
+                <div v-for="d in p.detail_pemesanans" :key="d.id">
+                  <span class="font-medium">{{ d.tipe_kamar?.nama_tipe_kamar }}</span>
+                  <span v-if="d.kamar" class="text-gray-500"> #{{ d.kamar.nomor_kamar }}</span>
+                </div>
               </td>
 
               <td class="p-4 text-gray-600">
