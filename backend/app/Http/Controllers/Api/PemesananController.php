@@ -162,11 +162,25 @@ class PemesananController extends Controller
     public function validasiPembayaran(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:lunas,belum_dibayar'
+            'status' => 'required|in:lunas,belum_dibayar',
+            'jumlah_bayar' => 'nullable|numeric|min:0',
+            'kembalian' => 'nullable|numeric|min:0',
         ]);
 
         $pemesanan = Pemesanan::findOrFail($id);
         $updateData = ['status_pembayaran' => $request->status];
+
+        if ($request->status === 'lunas') {
+            if ($request->filled('jumlah_bayar')) {
+                $updateData['jumlah_bayar'] = $request->jumlah_bayar;
+            }
+            if ($request->filled('kembalian')) {
+                $updateData['kembalian'] = $request->kembalian;
+            } elseif ($request->filled('jumlah_bayar')) {
+                $totalBayar = $pemesanan->total_harga + ($pemesanan->denda ?? 0);
+                $updateData['kembalian'] = max(0, $request->jumlah_bayar - $totalBayar);
+            }
+        }
 
         if ($request->status === 'belum_dibayar') {
             if ($pemesanan->bukti_transfer) {

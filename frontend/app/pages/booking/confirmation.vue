@@ -44,8 +44,24 @@
   </div>
 </div>
 
+<div class="border-t border-gray-200 pt-4 mb-4">
+  <p class="text-sm font-bold text-gray-800 mb-3">📌 Rekening Tujuan Transfer:</p>
+  <div class="bg-gray-50 border border-gray-200 rounded p-4 text-left text-sm space-y-2">
+    <div class="flex items-center gap-3">
+      <span class="font-bold text-blue-700 w-20">BCA</span>
+      <span class="font-mono font-semibold text-gray-800">1234567890</span>
+      <span class="text-gray-500">a/n HOTELQU VIUL</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="font-bold text-yellow-700 w-20">Mandiri</span>
+      <span class="font-mono font-semibold text-gray-800">0987654321</span>
+      <span class="text-gray-500">a/n HOTELQU VIUL</span>
+    </div>
+  </div>
+  <p class="text-xs text-gray-500 mt-2">* Transfer tepat sesuai total tagihan. Cantumkan nomor pemesanan sebagai berita acara/keterangan.</p>
+</div>
 <div class="border-t border-gray-200 pt-4">
-  <p class="text-sm font-bold text-gray-800 mb-2">Atau Upload Bukti Transfer Bank</p>
+  <p class="text-sm font-bold text-gray-800 mb-2">Upload Bukti Transfer Setelah Bayar</p>
   <input type="file" accept="image/*" @change="handleFileUpload" class="text-sm text-gray-600 block w-full mx-auto max-w-xs border border-gray-300 p-2 rounded">
   <button v-if="selectedFile" @click="uploadBukti" :disabled="uploading" class="mt-3 px-6 py-2 rounded bg-gradient-to-r from-gray-700 to-gray-400 text-white text-sm font-bold disabled:opacity-50 hover:bg-gradient-to-r from-gray-700 to-gray-400 shadow"> {{ uploading ? 'Mengupload...' : 'Upload Bukti Pembayaran' }} </button>
 </div>

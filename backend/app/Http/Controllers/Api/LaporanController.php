@@ -20,7 +20,7 @@ class LaporanController extends Controller
         $dari = $request->dari_tanggal;
         $sampai = $request->sampai_tanggal;
 
-        $pemesanans = Pemesanan::with('detailPemesanans.tipeKamar', 'user')
+        $pemesanans = Pemesanan::with('detailPemesanans.tipeKamar', 'detailPemesanans.kamar', 'user')
             ->whereDate('tgl_pemesanan', '>=', $dari)
             ->whereDate('tgl_pemesanan', '<=', $sampai)
             ->orderBy('tgl_pemesanan', 'desc')

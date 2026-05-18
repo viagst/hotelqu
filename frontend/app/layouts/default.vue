@@ -39,6 +39,7 @@
                     <NuxtLink v-if="isAdmin" to="/admin/dashboard" @click="showDropdown = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Panel Admin</NuxtLink>
                     <NuxtLink v-if="isResepsionis" to="/resepsionis/dashboard" @click="showDropdown = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Panel Resepsionis</NuxtLink>
                     <NuxtLink v-if="isTamu" to="/my-bookings" @click="showDropdown = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Pesanan Saya</NuxtLink>
+                    <NuxtLink v-if="isTamu" to="/profil" @click="showDropdown = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil Saya</NuxtLink>
                     <button @click="handleLogout" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 font-bold">Logout</button>
                   </div>
                 </div>
@@ -87,7 +88,7 @@
         
         <div class="bg-gray-700 p-4 rounded inline-block mb-6">
           <p class="font-bold text-gray-200 text-sm mb-1">Hubungi Kami:</p>
-          <p class="text-lg">Telp: +62 882-9316-5787 | Token: Yqf1zvaY3unx3bTtPjnN</p>
+          <p class="text-lg">Telp: +62 882-9316-5787</p>
           <p class="text-sm mt-1 text-gray-300">Email: info@hotelquviul.com</p>
         </div>
         

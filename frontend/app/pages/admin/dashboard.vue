@@ -27,6 +27,7 @@
 <th class="text-left py-3 text-gray-700 font-medium">Check-in</th>
 <th class="text-right py-3 text-gray-700 font-medium">Total</th>
 <th class="text-center py-3 text-gray-700 font-medium">Status</th>
+<th class="text-center py-3 text-gray-700 font-medium">Aksi</th>
 </tr>
 </thead>
 <tbody>
@@ -38,6 +39,9 @@
 <td class="py-3 text-right text-gray-800 font-medium">{{ formatRupiah(b.total_harga) }}</td>
 <td class="py-3 text-center">
 <span class="px-2 py-1 rounded-none text-[10px] font-bold uppercase" :class="{ 'bg-yellow-500/20 text-yellow-400': b.status_pemesanan === 'baru', 'bg-gradient-to-r from-gray-700 to-gray-400/20 text-gray-800': b.status_pemesanan === 'check_in', 'bg-green-500/20 text-green-400': b.status_pemesanan === 'check_out', }">{{ b.status_pemesanan.replace('_', ' ') }}</span>
+</td>
+<td class="py-3 text-center">
+<button @click="navigateTo(`/invoice/${b.id}`)" class="px-2 py-1 text-[10px] bg-gray-700 text-white font-bold border border-gray-800">Invoice</button>
 </td>
 </tr>
 </tbody>
